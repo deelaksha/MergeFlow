@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "MergeFlow - Visual Code Comparison & Merge Platform",
   description: "Modern visual code comparison and merge tool for developers",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

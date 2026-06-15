@@ -1,4 +1,4 @@
-import { HistoryAction, MergeAction, Conflict } from "@/lib/types";
+import { HistoryAction, MergeAction } from "@/lib/types";
 
 /**
  * History Manager

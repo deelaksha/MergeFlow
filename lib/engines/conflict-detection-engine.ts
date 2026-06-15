@@ -204,16 +204,10 @@ export class ConflictDetectionEngine {
    */
   private static detectImportConflicts(
     conflicts: Conflict[],
-    original: string,
-    modified: string
+    _original: string,
+    _modified: string
   ): void {
-    const importPattern = /import\s+.*?from\s+['"](.+?)['"]/g;
-
-    const originalImports = Array.from(original.matchAll(importPattern));
-    const modifiedImports = Array.from(modified.matchAll(importPattern));
-
-    const originalModules = new Set(originalImports.map((m) => m[1]));
-    const modifiedModules = new Set(modifiedImports.map((m) => m[1]));
+    const importPattern = /import\s+.*?from\s+['"](.+?)['"]/;
 
     // Detect import changes
     conflicts.forEach((conflict) => {

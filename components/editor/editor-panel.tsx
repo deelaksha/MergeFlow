@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useMergeStore } from "@/lib/stores/merge-store";
-import { getMonacoLanguage } from "@/lib/utils/language-detector";
+import { getMonacoLanguage, detectLanguageFromExtension } from "@/lib/utils/language-detector";
 import {
   Upload,
   Copy,
@@ -17,11 +17,19 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import type { editor } from "monaco-editor";
 
 const DiffEditor = dynamic(
   () => import("@monaco-editor/react").then((mod) => mod.DiffEditor),
   { ssr: false }
 );
+
+interface ILineChange {
+  originalStartLineNumber: number;
+  originalEndLineNumber: number;
+  modifiedStartLineNumber: number;
+  modifiedEndLineNumber: number;
+}
 
 export function EditorPanel() {
   const { theme } = useTheme();
@@ -32,7 +40,7 @@ export function EditorPanel() {
   const [rightContent, setRightContent] = useState(modifiedFile?.content || "");
   const [showDiff, setShowDiff] = useState(false);
   const [selectedLine, setSelectedLine] = useState<number | null>(null);
-  const [editorInstance, setEditorInstance] = useState<any>(null);
+  const [editorInstance, setEditorInstance] = useState<editor.IStandaloneDiffEditor | null>(null);
   const [currentConflictIndex, setCurrentConflictIndex] = useState<number>(0);
   const [conflictLines, setConflictLines] = useState<number[]>([]);
   const [syncScroll, setSyncScroll] = useState<boolean>(true);
@@ -56,14 +64,12 @@ export function EditorPanel() {
     if (!file) return;
 
     const content = await file.text();
-    const language = getMonacoLanguage(
-      file.name.split(".").pop()?.toLowerCase() as any
-    );
+    const language = detectLanguageFromExtension(file.name);
 
     setOriginalFile({
       name: file.name,
       content,
-      language: language as any,
+      language,
       size: file.size,
     });
     setLeftContent(content);
@@ -75,14 +81,12 @@ export function EditorPanel() {
     if (!file) return;
 
     const content = await file.text();
-    const language = getMonacoLanguage(
-      file.name.split(".").pop()?.toLowerCase() as any
-    );
+    const language = detectLanguageFromExtension(file.name);
 
     setModifiedFile({
       name: file.name,
       content,
-      language: language as any,
+      language,
       size: file.size,
     });
     setRightContent(content);
@@ -112,6 +116,8 @@ export function EditorPanel() {
 
   // Swap left and right
   const swapFiles = () => {
+    if (!originalFile || !modifiedFile) return;
+
     const tempContent = leftContent;
     const tempFile = originalFile;
 
@@ -238,7 +244,7 @@ export function EditorPanel() {
       const lineChanges = editorInstance.getLineChanges() || [];
       const conflicts: number[] = [];
 
-      lineChanges.forEach((change: any) => {
+      lineChanges.forEach((change: ILineChange) => {
         // Add the starting line of each change as a conflict
         if (change.originalStartLineNumber) {
           conflicts.push(change.originalStartLineNumber);
@@ -292,13 +298,6 @@ export function EditorPanel() {
     } catch (error) {
       console.error("Error jumping to line:", error);
     }
-  };
-
-  // Format code
-  const formatCode = async () => {
-    // Trigger Monaco's built-in format
-    // This will be handled by Monaco editor's format document command
-    alert("Use Shift+Alt+F in the editor to format code");
   };
 
   const language = originalFile?.language

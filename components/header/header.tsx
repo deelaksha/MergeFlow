@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { useMergeStore } from "@/lib/stores/merge-store";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export function Header() {
   const { theme, setTheme } = useTheme();
@@ -59,8 +60,14 @@ export function Header() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">M</span>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+              <Image
+                src="/logo.png"
+                alt="MergeFlow Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">

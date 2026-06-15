@@ -97,7 +97,7 @@ export class SearchEngine {
 
     try {
       return new RegExp(pattern, flags);
-    } catch (e) {
+    } catch {
       // If regex is invalid, return a regex that matches nothing
       return /(?!)/;
     }
@@ -109,7 +109,7 @@ export class SearchEngine {
   private static findMatches(
     line: string,
     pattern: RegExp,
-    options: SearchOptions
+    _options: SearchOptions
   ): Array<{ start: number; end: number }> {
     const matches: Array<{ start: number; end: number }> = [];
     let match: RegExpExecArray | null;

@@ -7,7 +7,6 @@ import {
   EditorConfig,
   SearchOptions,
   SearchResult,
-  Conflict,
   MergeAction,
 } from "@/lib/types";
 import { DiffEngine } from "@/lib/engines/diff-engine";

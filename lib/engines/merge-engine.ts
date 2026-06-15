@@ -137,7 +137,7 @@ export class MergeEngine {
       // Deep merge objects
       const merged = this.deepMerge(originalObj, modifiedObj);
       return JSON.stringify(merged, null, 2);
-    } catch (e) {
+    } catch {
       // If parsing fails, return modified
       return modified;
     }
@@ -180,11 +180,9 @@ export class MergeEngine {
     conflicts: Conflict[]
   ): string {
     const originalLines = originalContent.split("\n");
-    const modifiedLines = modifiedContent.split("\n");
     const result: string[] = [];
 
     let originalIndex = 0;
-    let modifiedIndex = 0;
 
     // Sort conflicts by start line
     const sortedConflicts = [...conflicts].sort(
@@ -196,7 +194,6 @@ export class MergeEngine {
       while (originalIndex < conflict.startLine - 1) {
         result.push(originalLines[originalIndex]);
         originalIndex++;
-        modifiedIndex++;
       }
 
       // Add resolved conflict content
@@ -210,7 +207,6 @@ export class MergeEngine {
 
       // Move indices past the conflict
       originalIndex = conflict.endLine;
-      modifiedIndex = conflict.endLine;
     });
 
     // Add remaining lines
@@ -271,7 +267,7 @@ export class MergeEngine {
     sourceContent: string,
     targetContent: string,
     selection: { start: number; end: number },
-    direction: "left-to-right" | "right-to-left"
+    _direction: "left-to-right" | "right-to-left"
   ): string {
     const sourceLines = sourceContent.split("\n");
     const targetLines = targetContent.split("\n");
